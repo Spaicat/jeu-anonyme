@@ -4,6 +4,6 @@ let usernameLocal = "";
 if (typeof localStorage !== "undefined")
 	usernameLocal = localStorage.username || "";
 
-const username = writable(usernameLocal);
+const user = writable(usernameLocal);
 
-export {username};
+export {user};

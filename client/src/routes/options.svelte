@@ -20,5 +20,8 @@
 		<a class="btn" on:click={handleConfirm} href="/lobby">
 			<span>Confirmer</span>
 		</a>
+		<a class="btn" href="/">
+			<span>Retour</span>
+		</a>
 	</div>
 </main>

@@ -11,5 +11,8 @@
 		<a class="btn" on:click={handleJoin} href="/lobby">
 			<span>Rejoindre une partie</span>
 		</a>
+		<a class="btn" href="/">
+			<span>Retour</span>
+		</a>
 	</div>
 </main>

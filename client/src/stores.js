@@ -1,9 +1,25 @@
 import { writable } from "svelte/store";
 
-let usernameLocal = "";
-if (typeof localStorage !== "undefined")
-	usernameLocal = localStorage.username || "";
+function createUser() {
+	let usernameLocal = "";
+	if (typeof localStorage !== "undefined")
+		usernameLocal = localStorage.username || "";
 
-const user = writable(usernameLocal);
+	const { subscribe, set, update } = writable({
+		name: usernameLocal,
+		room: ""
+	});
 
-export {user};
+	return {
+		subscribe,
+		changeName: (val) => update((user) => {
+			return { ...user, "name": val }
+		}),
+		changeRoom: (val) => update((user) => {
+			return { ...user, "room": val }
+		}),
+		reset: () => set({ name: "", room: "" })
+	};
+}
+
+export const user = createUser();

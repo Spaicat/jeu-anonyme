@@ -1,8 +1,13 @@
 <script>
 	import "../global.scss";
 	import { user } from "../stores.js";
+	import io from "socket.io-client";
+
+	const socket = io("http://localhost:5000", {
+		withCredentials: true
+	});
 	
-	let username = $user;
+	let username = $user.name;
 	$: usernameTrimed = username.trim();
 	$: isUsernameValid = !(usernameTrimed.length <= 0 || usernameTrimed.length >= 20)
 			&& /[0-9a-zA-Z_.\-]{4}/gmi.test(usernameTrimed);
@@ -13,8 +18,15 @@
 			return;
 		}
 		
+		// Save username
 		localStorage.setItem("username", username.trim());
-		user.set(username.trim());
+		console.log(username);
+		user.changeName(username.trim());
+
+		socket.emit("create-room", (room) => {
+			user.changeRoom(room.id);
+			console.log(user);
+		});
 	}
 </script>
 

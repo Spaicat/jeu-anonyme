@@ -6,7 +6,8 @@
 
 
 	export async function load({ url }) {
-		if (browser && get(user) === "" && url.pathname !== "/") {
+		const userValid = get(user.name) !== "";
+		if (browser && !userValid && url.pathname !== "/") {
 			return {
 				status: 302,
 				redirect: "/"

@@ -2,7 +2,7 @@
 	"name": "client",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "vite dev --port 5000",
+		"dev": "vite dev",
 		"build": "vite build",
 		"package": "svelte-kit package",
 		"preview": "vite preview",
@@ -19,5 +19,8 @@
 		"svelte-preprocess": "^4.10.7",
 		"vite": "^2.9.13"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"socket.io-client": "^4.5.1"
+	}
 }

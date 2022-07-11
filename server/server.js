@@ -7,21 +7,54 @@ const app = express();
 const httpServer = http.createServer(app)
 const io = new Server(httpServer, {
 	cors: {
-		origin: "http://localhost:3000"
+		origin: "http://localhost:3000",
+		credentials: true
 	}
 });
 
+let rooms = {};
+
+const joinRoom = (socket, room) => {
+	room.sockets.push(socket);
+	socket.join(room.id);
+};
+
+const leaveRooms = (socket) => {
+	const roomsToDelete = [];
+	for (const id in rooms) {
+		const room = rooms[id];
+		if (room.sockets.includes(socket)) {
+			socket.leave(id);
+			room.sockets = room.sockets.filter((item) => item !== socket);
+		}
+		if (room.sockets.length == 0) {
+			roomsToDelete.push(room);
+		}
+	}
+
+	for (const room of roomsToDelete) {
+		delete rooms[room.id];
+	}
+};
+
 io.on("connection", (socket) => {
-	console.log(socket.id);
-	socket.on("send-message", (message, room) => {
-		if (room === "")
-			socket.broadcast.emit("receive-message", message);
-		else
-			socket.to(room).emit("receive-message", message);
+	socket.on("create-room", (callback) => {
+		const room = {
+			id: Math.random().toString().slice(2, 8),
+			sockets: []
+		};
+		rooms[room.id] = room;
+		joinRoom(socket, room);
+		callback({ id: room.id });
 	});
-	socket.on("join-room", (room, callback) => {
-		socket.join(room);
-		callback(`Joined ${room}`);
+
+	socket.on("join-room", (roomId, callback) => {
+		joinRoom(socket, rooms[roomId]);
+		callback({ id: roomId });
+	});
+
+	socket.on("disconnect", () => {
+		leaveRooms(socket);
 	});
 });
 

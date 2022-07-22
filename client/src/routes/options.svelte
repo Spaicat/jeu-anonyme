@@ -1,8 +1,5 @@
 <script>
 	let mode = 1;
-	import { user } from "../stores.js";
-
-	console.log($user);
 
 	function handleConfirm() {
 		alert("Mode " + mode);
@@ -10,7 +7,6 @@
 </script>
 
 <main>
-	{$user.room}
 	<div>
 		<label for="mode-1">Mode honnête</label>
 		<input type="radio" bind:group={mode} name="mode" id="mode-1" value={1}>
@@ -23,7 +19,7 @@
 		<a class="btn" on:click={handleConfirm} href="/lobby">
 			<span>Confirmer</span>
 		</a>
-		<a class="btn" href="/">
+		<a class="btn" href="/lobby">
 			<span>Retour</span>
 		</a>
 	</div>

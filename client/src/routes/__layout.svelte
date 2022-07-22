@@ -1,13 +1,20 @@
 <script context="module">
 	import "../global.scss";
-	import { browser } from "$app/env"
-	import { get } from "svelte/store"
-	import { user } from "../stores.js";
+	import { browser } from "$app/env";
 
+	// TODO : User & Room validation
 
 	export async function load({ url }) {
-		const userValid = get(user.name) !== "";
-		if (browser && !userValid && url.pathname !== "/") {
+		let user = null;
+		if (browser) {
+			user = JSON.parse(localStorage.getItem("user"));
+		}
+
+		const userValid = user !== null
+			&& typeof user.name === "string"
+			&& user.name !== "";
+	
+		if (browser && url.pathname !== "/" && !userValid) {
 			return {
 				status: 302,
 				redirect: "/"
@@ -17,4 +24,4 @@
 		return {};
 	}
 </script>
-<slot></slot>
+<slot />

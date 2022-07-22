@@ -12,50 +12,54 @@ const io = new Server(httpServer, {
 	}
 });
 
-let rooms = {};
+let rooms = new Map();
 
-const joinRoom = (socket, room) => {
-	room.sockets.push(socket);
-	socket.join(room.id);
-};
+const createRoom = (host) => {
+	const roomId = Math.random().toString().slice(2, 8); // TODO : utils function
+	const room = {
+		roomId, 
+		users: [host]
+	};
+	rooms.set(roomId, room);
 
-const leaveRooms = (socket) => {
-	const roomsToDelete = [];
-	for (const id in rooms) {
-		const room = rooms[id];
-		if (room.sockets.includes(socket)) {
-			socket.leave(id);
-			room.sockets = room.sockets.filter((item) => item !== socket);
-		}
-		if (room.sockets.length == 0) {
-			roomsToDelete.push(room);
-		}
-	}
+	return room;
+}
 
-	for (const room of roomsToDelete) {
-		delete rooms[room.id];
-	}
+const joinRoom = (roomId, user) => {
+	let room = rooms.get(roomId);
+    room.users.push(user);
+    rooms.set(roomId, room);
+	
+    return room;
 };
 
 io.on("connection", (socket) => {
-	socket.on("create-room", (callback) => {
-		const room = {
-			id: Math.random().toString().slice(2, 8),
-			sockets: []
-		};
-		rooms[room.id] = room;
-		joinRoom(socket, room);
-		callback({ id: room.id });
+	socket.on("create-room", (user) => {
+		const room = createRoom(user);
+		console.log("Room: " + room.roomId + " has been created");
+		
+		// TODO : Leaves all others rooms : https://github.com/Quinzical/Quinzical-api/blob/65b4520dc8154744335dffffc61705a92a966aa5/src/socket/main.js#L51
+		
+		socket.join(room.roomId);
+		io.to(socket.id).emit("room-created", room);
 	});
 
-	socket.on("join-room", (roomId, callback) => {
-		joinRoom(socket, rooms[roomId]);
-		callback({ id: roomId });
+	socket.on("join-room", (roomId, user) => {
+		if (!rooms.has(roomId)) {
+			io.to(socket.id).emit("error", "Room does not exist");
+			return;
+		}
+		const room = joinRoom(roomId, user)
+
+		// TODO : Same todo as above
+
+		socket.join(room.roomId);
+		io.to(room.roomId).emit("user-joined", room);
 	});
 
-	socket.on("disconnect", () => {
-		leaveRooms(socket);
-	});
+	// socket.on("disconnect", () => {
+	// 	leaveRooms(socket);
+	// });
 });
 
 httpServer.listen(process.env.PORT, () => {

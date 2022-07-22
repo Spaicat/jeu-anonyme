@@ -1,12 +1,18 @@
+<script>
+	import { user } from "../stores/user.js";
+	import { room } from "../stores/room.js";
+	import { io } from "$lib/realtime";
+</script>
+
 <main>
 	<div>
-		Code #44541
+		Code #{$room.roomId}
 	</div>
 	<div>
 		<ul>
-			<li>Joueur 1</li>
-			<li>Joueur 2</li>
-			<li>Joueur 3</li>
+			{#each $room.users as username}
+				<li>{ username }</li>
+			{/each}
 		</ul>
 	</div>
 	<div class="btn-container">

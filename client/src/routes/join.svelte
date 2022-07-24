@@ -4,7 +4,7 @@
 	let code = "";
 
 	function handleJoin() {
-		io.emit("join-room", code, $user.name);
+		io.emit("join-room", code, { name: $user.name });
 	}
 </script>
 

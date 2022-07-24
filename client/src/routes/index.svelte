@@ -31,7 +31,7 @@
 		
 		io.auth = { name };
 		$user.name = name
-		io.emit("create-room", name);
+		io.emit("create-room", { name });
 	}
 	
 	function handleJoin(event) {
@@ -45,7 +45,13 @@
 		io.auth = { name };
 		$user.name = name
 	}
+
+	function userDisconnect() {
+		io.emit("disconnect")
+	}
 </script>
+
+<svelte:window on:unload={userDisconnect} />
 
 <main>
 	<h1>{username}</h1>

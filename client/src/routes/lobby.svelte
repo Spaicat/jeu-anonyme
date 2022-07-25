@@ -10,8 +10,8 @@
 	</div>
 	<div>
 		<ul>
-			{#each $room.users as username}
-				<li>{ username }</li>
+			{#each $room.users || [] as user}
+				<li>{ user.name }</li>
 			{/each}
 		</ul>
 	</div>

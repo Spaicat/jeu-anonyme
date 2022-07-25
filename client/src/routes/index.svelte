@@ -11,14 +11,19 @@
 	io.connect();
 	
 	io.on("room-created", (roomInfo) => {
-		console.log("socket on create-room: ", room.roomId);
+		console.log("socket on create-room: ", roomInfo.roomId);
 		console.log(roomInfo);
-		$room = roomInfo
+		$room = roomInfo;
 	})
 
 	io.on("user-joined", (roomInfo) => {
 		console.log(roomInfo);
-		$room = roomInfo
+		$room = roomInfo;
+	});
+
+	io.on("user-disconnected", (roomInfo) => {
+		console.log(roomInfo);
+		$room = roomInfo;
 	});
 	
 	function handleCreate(event) {
@@ -47,7 +52,7 @@
 	}
 
 	function userDisconnect() {
-		io.emit("disconnect")
+		io.emit("disconnect");
 	}
 </script>
 

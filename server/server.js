@@ -39,19 +39,19 @@ const closeRoom = (roomId) => {
 };
 
 const leaveRooms = (socket) => {
-	for (const roomId in rooms) {
-		const room = rooms[roomId];
-		if (room.users.some(elt => elt.socket === socket.id)) {
+	for (const room of rooms.values()) {
+		if (room.users.some(elt => elt.socketId === socket.id)) {
 			// Remove user from the room
 			room.users = room.users.filter(elt => elt.socketId !== socket.id);
 			socket.leave(socket.id);
+			io.to(room.roomId).emit("user-disconnected", room);
 			
 			// Choose random host if he leaves
 			if (room.users.some(elt => elt.socketId === room.host.socketId))
 				room.host = room.users[Math.floor(Math.random() * room.users.length)]; // TODO : utils function
 		}
 		if (room.users.length == 0 || !room.host) {
-			closeRoom(roomId);
+			closeRoom(room.roomId);
 		}
 	}
 };

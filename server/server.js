@@ -38,17 +38,19 @@ const closeRoom = (roomId) => {
 	rooms.delete(roomId);
 };
 
-const leaveRooms = (userId) => {
+const leaveRooms = (socket) => {
 	for (const roomId in rooms) {
 		const room = rooms[roomId];
-		if (room.sockets.includes(userId)) {
+		if (room.users.some(elt => elt.socket === socket.id)) {
 			// Remove user from the room
-			room.users = room.users.filter(elt => elt.socket !== userId);
+			room.users = room.users.filter(elt => elt.socketId !== socket.id);
+			socket.leave(socket.id);
+			
 			// Choose random host if he leaves
-			if (room.users.find(elt => elt.socket === room.host.socket))
+			if (room.users.some(elt => elt.socketId === room.host.socketId))
 				room.host = room.users[Math.floor(Math.random() * room.users.length)]; // TODO : utils function
 		}
-		if (room.sockets.length == 0) {
+		if (room.users.length == 0 || !room.host) {
 			closeRoom(roomId);
 		}
 	}
@@ -56,10 +58,10 @@ const leaveRooms = (userId) => {
 
 io.on("connection", (socket) => {
 	socket.on("create-room", (user) => {
-		const room = createRoom({ ...user, socket });
-		console.log("Room: " + room.roomId + " has been created");
+		leaveRooms(socket);
 		
-		// TODO : Leaves all others rooms : https://github.com/Quinzical/Quinzical-api/blob/65b4520dc8154744335dffffc61705a92a966aa5/src/socket/main.js#L51
+		const room = createRoom({ ...user, socketId: socket.id });
+		console.log("Room: " + room.roomId + " has been created");
 		
 		socket.join(room.roomId);
 		io.to(socket.id).emit("room-created", room);
@@ -70,22 +72,16 @@ io.on("connection", (socket) => {
 			io.to(socket.id).emit("error", "Room does not exist");
 			return;
 		}
-		const room = joinRoom(roomId, { ...user, socket });
-
-		// TODO : Same todo as above
+		leaveRooms(socket);
+		
+		const room = joinRoom(roomId, { ...user, socketId: socket.id });
 
 		socket.join(room.roomId);
 		io.to(room.roomId).emit("user-joined", room);
 	});
 
 	socket.on("disconnect", () => {
-		leaveRooms(socket.id);
-		for (const id in rooms) {
-			const room = rooms[id];
-			if (room.sockets.includes(socket.id)) {
-				socket.leave(id);
-			}
-		}
+		leaveRooms(socket);
 	});
 });
 

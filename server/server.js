@@ -28,8 +28,8 @@ const createRoom = (host) => {
 
 const joinRoom = (roomId, user) => {
 	let room = rooms.get(roomId);
-    room.users.push(user);
-    rooms.set(roomId, room);
+	room.users.push(user);
+	rooms.set(roomId, room);
 	
     return room;
 };
@@ -42,7 +42,11 @@ const leaveRooms = (userId) => {
 	for (const roomId in rooms) {
 		const room = rooms[roomId];
 		if (room.sockets.includes(userId)) {
-			room.users = room.users.filter((elt) => elt.socket !== userId); // TODO: Change host if he leaves
+			// Remove user from the room
+			room.users = room.users.filter(elt => elt.socket !== userId);
+			// Choose random host if he leaves
+			if (room.users.find(elt => elt.socket === room.host.socket))
+				room.host = room.users[Math.floor(Math.random() * room.users.length)]; // TODO : utils function
 		}
 		if (room.sockets.length == 0) {
 			closeRoom(roomId);

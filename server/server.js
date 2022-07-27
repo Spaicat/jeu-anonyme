@@ -44,14 +44,15 @@ const leaveRooms = (socket) => {
 			// Remove user from the room
 			room.users = room.users.filter(elt => elt.socketId !== socket.id);
 			socket.leave(socket.id);
-			io.to(room.roomId).emit("user-disconnected", room);
 			
 			// Choose random host if he leaves
-			if (room.users.some(elt => elt.socketId === room.host.socketId))
+			if (!room.users.some(elt => elt.socketId === room.host.socketId))
 				room.host = room.users[Math.floor(Math.random() * room.users.length)]; // TODO : utils function
-		}
-		if (room.users.length == 0 || !room.host) {
-			closeRoom(room.roomId);
+
+			if (room.users.length == 0 || !room.host)
+				closeRoom(room.roomId);
+				
+			io.to(room.roomId).emit("user-disconnected", room);
 		}
 	}
 };

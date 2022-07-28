@@ -2,6 +2,7 @@ import "dotenv/config.js";
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
+import { isHost, isRoomHasUser } from "./helpers/socket";
 import { makeIntId } from "./helpers/utils";
 
 const app = express();
@@ -21,11 +22,12 @@ const createRoom = (host) => {
 		roomId,
 		host,
 		users: [host],
+		inGame: false,
 	};
 	rooms.set(roomId, room);
 
 	return room;
-}
+};
 
 const joinRoom = (roomId, user) => {
 	let room = rooms.get(roomId);
@@ -41,7 +43,7 @@ const closeRoom = (roomId) => {
 
 const leaveRooms = (socket) => {
 	for (const room of rooms.values()) {
-		if (isHost(room, socket.id)) {
+		if (isRoomHasUser(room, socket.id)) {
 			// Remove user from the room
 			room.users = room.users.filter(elt => elt.socketId !== socket.id);
 			socket.leave(socket.id);
@@ -80,6 +82,16 @@ io.on("connection", (socket) => {
 
 		socket.join(room.roomId);
 		io.to(room.roomId).emit("user-joined", room);
+	});
+
+	socket.on("start-game", (roomId) => {
+		const room = rooms.get(roomId);
+		if (!isRoomHasUser(room, socket.id))
+			io.to(socket.id).emit("error", "User not in room");
+		if (!isHost(room, socket.id))
+			io.to(socket.id).emit("error", "User not host");
+
+		room.inGame = true;
 	});
 
 	socket.on("disconnect", () => {

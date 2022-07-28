@@ -2,6 +2,7 @@ import "dotenv/config.js";
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
+import { makeIntId } from "./helpers/utils";
 
 const app = express();
 const httpServer = http.createServer(app)
@@ -15,11 +16,11 @@ const io = new Server(httpServer, {
 let rooms = new Map();
 
 const createRoom = (host) => {
-	const roomId = Math.random().toString().slice(2, 8); // TODO : utils function
+	const roomId = makeIntId(6);
 	const room = {
 		roomId,
 		host,
-		users: [host]
+		users: [host],
 	};
 	rooms.set(roomId, room);
 
@@ -40,14 +41,14 @@ const closeRoom = (roomId) => {
 
 const leaveRooms = (socket) => {
 	for (const room of rooms.values()) {
-		if (room.users.some(elt => elt.socketId === socket.id)) {
+		if (isHost(room, socket.id)) {
 			// Remove user from the room
 			room.users = room.users.filter(elt => elt.socketId !== socket.id);
 			socket.leave(socket.id);
 			
 			// Choose random host if he leaves
 			if (!room.users.some(elt => elt.socketId === room.host.socketId))
-				room.host = room.users[Math.floor(Math.random() * room.users.length)]; // TODO : utils function
+				room.host = room.users[0];
 
 			if (room.users.length == 0 || !room.host)
 				closeRoom(room.roomId);

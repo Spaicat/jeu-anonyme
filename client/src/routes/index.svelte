@@ -34,8 +34,8 @@
 		
 		let name = username.trim();
 		
-		io.auth = { name };
-		$user.name = name
+		$user.socketId = io.id;
+		$user.name = name;
 		io.emit("create-room", { name });
 	}
 	
@@ -47,7 +47,7 @@
 		
 		let name = username.trim();
 		
-		io.auth = { name };
+		$user.socketId = io.id;
 		$user.name = name
 	}
 

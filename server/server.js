@@ -2,8 +2,8 @@ import "dotenv/config.js";
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
-import { isHost, isRoomHasUser } from "./helpers/socket";
-import { makeIntId } from "./helpers/utils";
+import { isHost, isRoomHasUser } from "./helpers/socket.js";
+import { makeIntId } from "./helpers/utils.js";
 
 const app = express();
 const httpServer = http.createServer(app)
@@ -80,8 +80,8 @@ io.on("connection", (socket) => {
 		
 		const room = joinRoom(roomId, { ...user, socketId: socket.id });
 
-		socket.join(room.roomId);
-		io.to(room.roomId).emit("user-joined", room);
+		socket.join(roomId);
+		io.to(roomId).emit("user-joined", room);
 	});
 
 	socket.on("start-game", (roomId) => {
@@ -92,6 +92,7 @@ io.on("connection", (socket) => {
 			io.to(socket.id).emit("error", "User not host");
 
 		room.inGame = true;
+		io.to(roomId).emit("game-started", room);
 	});
 
 	socket.on("disconnect", () => {

@@ -6,6 +6,21 @@
 
 	$: isHost = $room.host?.socketId === $user.socketId;
 
+	io.on("disconnect", () => {
+		alert("Error, disconnected");
+		goto("/");
+	});
+
+	io.on("user-joined", (roomInfo) => {
+		console.log(roomInfo);
+		$room = roomInfo;
+	});
+
+	io.on("user-disconnected", (roomInfo) => {
+		console.log(roomInfo);
+		$room = roomInfo;
+	});
+
 	io.on("game-started", (roomInfo) => {
 		$room = roomInfo;
 		goto("/play");

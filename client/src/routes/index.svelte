@@ -1,9 +1,12 @@
 <script>
+	import { browser } from "$app/env";
 	import { user } from "../stores/user.js";
 	import { room } from "../stores/room.js";
 	import { io } from "$lib/realtime";
 
-	let username = $user.name || "";
+	let username = "";
+	if (browser) username = localStorage.getItem("name") || "";
+
 	$: usernameTrimed = username.trim();
 	$: isUsernameValid = !(usernameTrimed.length <= 0 || usernameTrimed.length >= 20)
 			&& /[0-9a-zA-Z_.\-]{4}/gmi.test(usernameTrimed);
@@ -16,26 +19,21 @@
 		$room = roomInfo;
 	})
 
-	io.on("user-joined", (roomInfo) => {
-		console.log(roomInfo);
-		$room = roomInfo;
-	});
+	function saveUser(name) {
+		$user.socketId = io.id;
+		$user.name = name;
 
-	io.on("user-disconnected", (roomInfo) => {
-		console.log(roomInfo);
-		$room = roomInfo;
-	});
-	
+		localStorage.setItem("name", name);
+	}
+
 	function handleCreate(event) {
 		if (!isUsernameValid) {
 		 	event.preventDefault()
 			return;
 		}
-		
 		let name = username.trim();
-		
-		$user.socketId = io.id;
-		$user.name = name;
+		saveUser(name);
+
 		io.emit("create-room", { name });
 	}
 	
@@ -44,11 +42,8 @@
 		 	event.preventDefault()
 			return;
 		}
-		
 		let name = username.trim();
-		
-		$user.socketId = io.id;
-		$user.name = name
+		saveUser(name);
 	}
 
 	function userDisconnect() {

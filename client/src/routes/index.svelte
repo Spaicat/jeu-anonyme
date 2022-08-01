@@ -54,9 +54,8 @@
 <svelte:window on:unload={userDisconnect} />
 
 <main>
-	<h1>{username}</h1>
-	<label for="input-pseudo">Tapez votre pseudo :</label>
-	<input type="text" name="pseudo" id="input-pseudo" bind:value={username} />
+	<label class="input-desc" for="input-pseudo">Tapez votre pseudo :</label>
+	<input class="input-text" type="text" name="pseudo" id="input-pseudo" bind:value={username} />
 	<div class="btn-container">
 		<a class="btn" on:click={handleCreate} href="/lobby" class:disabled={!isUsernameValid}>
 			<span>Créer une partie</span>

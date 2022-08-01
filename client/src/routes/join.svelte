@@ -9,8 +9,8 @@
 </script>
 
 <main>
-	<label for="input-code">Tapez un code :</label>
-	<input type="text" name="code" id="input-code" bind:value={code} />
+	<label class="input-desc" for="input-code">Tapez un code :</label>
+	<input class="input-text" type="text" name="code" id="input-code" bind:value={code} />
 	<div class="btn-container">
 		<a class="btn" on:click={handleJoin} href="/lobby">
 			<span>Rejoindre une partie</span>

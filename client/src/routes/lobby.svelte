@@ -7,13 +7,8 @@
 	$: isHost = $room.host?.socketId === $user.socketId;
 
 	io.on("disconnect", () => {
-		alert("Error, disconnected");
+		console.error("Disconnected");
 		goto("/");
-	});
-
-	io.on("user-joined", (roomInfo) => {
-		console.log(roomInfo);
-		$room = roomInfo;
 	});
 
 	io.on("user-disconnected", (roomInfo) => {
@@ -36,17 +31,25 @@
 </script>
 
 <main>
-	<div>
+	<h2>
 		Code #{$room.roomId}
-	</div>
-	<div>
-		<ul>
-			{#each $room.users || [] as user}
-				<li>
-					{#if $room.host.socketId === user.socketId}
-						&lt;Host&gt;
-					{/if}
-					{ user.name }
+	</h2>
+	<div class="user__container">
+		<ul class="user__list">
+			{#each $room.users || [] as userItem}
+				<li class="user__item">
+					<div class="user__icon">
+						<img class="user__avatar" src="https://avatars.dicebear.com/api/initials/{userItem.name}.svg" alt="avatar">
+						<div class="user__details">
+							{#if userItem.socketId === $room.host.socketId}
+								<div>H</div>
+							{/if}
+							{#if userItem.socketId === $user.socketId}
+								<div>Me</div>
+							{/if}
+						</div>
+					</div>
+					<div class="user__name">{ userItem.name }</div>
 				</li>
 			{/each}
 		</ul>
@@ -62,3 +65,36 @@
 		</a>
 	</div>
 </main>
+
+<style lang="scss">
+	@use "../styles/variables.scss" as v;
+
+	.user {
+		&__container {
+			padding: 5px;
+		}
+		&__list {
+			display: flex;
+			flex-direction: row;
+			padding: 0;
+		}
+		&__item {
+			list-style: none;
+		}
+		&__icon {
+			position: relative;
+		}
+		&__avatar {
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+		}
+		&__details {
+			position: absolute;
+			bottom: 0;
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+		}
+	}
+</style>

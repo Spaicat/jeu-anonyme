@@ -17,7 +17,12 @@
 		console.log("socket on create-room: ", roomInfo.roomId);
 		console.log(roomInfo);
 		$room = roomInfo;
-	})
+	});
+
+	io.on("user-joined", (roomInfo) => {
+		console.log(roomInfo);
+		$room = roomInfo;
+	});
 
 	function saveUser(name) {
 		$user.socketId = io.id;

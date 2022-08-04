@@ -2,7 +2,9 @@
 	import { user } from "../stores/user.js";
 	import { room } from "../stores/room.js";
 	import { io } from "$lib/realtime";
-	import { goto } from '$app/navigation';
+	import { goto } from "$app/navigation";
+	import CrownIcon from "../assets/icons/CrownIcon.svelte";
+	import UserIcon from "../assets/icons/UserIcon.svelte";
 
 	$: isHost = $room.host?.socketId === $user.socketId;
 
@@ -39,19 +41,75 @@
 			{#each $room.users || [] as userItem}
 				<li class="user__item">
 					<div class="user__icon">
-						<img class="user__avatar" src="https://avatars.dicebear.com/api/initials/{userItem.name}.svg" alt="avatar">
+						<div class="user__avatar">
+							<img src="https://avatars.dicebear.com/api/initials/{userItem.name}.svg" alt="avatar">
+						</div>
 						<div class="user__details">
 							{#if userItem.socketId === $room.host.socketId}
-								<div>H</div>
+								<div class="details-icon host-icon">
+									<CrownIcon />
+								</div>
 							{/if}
 							{#if userItem.socketId === $user.socketId}
-								<div>Me</div>
+								<div class="details-icon self-icon">
+									<UserIcon />
+								</div>
 							{/if}
 						</div>
 					</div>
 					<div class="user__name">{ userItem.name }</div>
 				</li>
 			{/each}
+				<li class="user__item">
+					<div class="user__icon">
+						<div class="user__avatar">
+							<img src="https://avatars.dicebear.com/api/initials/Random.svg" alt="avatar">
+						</div>
+						<div class="user__details">
+						</div>
+					</div>
+					<div class="user__name">Random</div>
+				</li>
+				<li class="user__item">
+					<div class="user__icon">
+						<div class="user__avatar">
+							<img src="https://avatars.dicebear.com/api/initials/Random.svg" alt="avatar">
+						</div>
+						<div class="user__details">
+						</div>
+					</div>
+					<div class="user__name">Random</div>
+				</li>
+				<li class="user__item">
+					<div class="user__icon">
+						<div class="user__avatar">
+							<img src="https://avatars.dicebear.com/api/initials/Random.svg" alt="avatar">
+						</div>
+						<div class="user__details">
+						</div>
+					</div>
+					<div class="user__name">Random</div>
+				</li>
+				<li class="user__item">
+					<div class="user__icon">
+						<div class="user__avatar">
+							<img src="https://avatars.dicebear.com/api/initials/Random.svg" alt="avatar">
+						</div>
+						<div class="user__details">
+						</div>
+					</div>
+					<div class="user__name">Random</div>
+				</li>
+				<li class="user__item">
+					<div class="user__icon">
+						<div class="user__avatar">
+							<img src="https://avatars.dicebear.com/api/initials/Random.svg" alt="avatar">
+						</div>
+						<div class="user__details">
+						</div>
+					</div>
+					<div class="user__name">Random</div>
+				</li>
 		</ul>
 	</div>
 	<div class="btn-container">
@@ -69,32 +127,59 @@
 <style lang="scss">
 	@use "../styles/variables.scss" as v;
 
+	h2 {
+		text-align: center;
+	}
 	.user {
 		&__container {
+			display: flex;
+			justify-content: center;
 			padding: 5px;
+			width: 100%;
 		}
 		&__list {
 			display: flex;
 			flex-direction: row;
+			overflow: scroll;
 			padding: 0;
 		}
 		&__item {
+			flex: 1 1 auto;
+			margin: 0 10px;
 			list-style: none;
 		}
 		&__icon {
 			position: relative;
+			margin: 0 10px 8px 10px;
+		}
+		&__name {
+			text-align: center;
 		}
 		&__avatar {
+			overflow: hidden;
 			width: 50px;
 			height: 50px;
 			border-radius: 50%;
 		}
 		&__details {
 			position: absolute;
-			bottom: 0;
+			bottom: -5px;
+			left: 50%;
+			transform: translateX(-50%);
 			display: flex;
 			justify-content: space-between;
-			width: 100%;
+			width: 65px;
+			.details-icon {
+				display: flex;
+				padding: 3px;
+				background-color: #3646be;
+				border: 1px solid white;
+				border-radius: 50%;
+				:global(svg) {
+					width: 15px;
+					height: 15px;
+				}
+			}
 		}
 	}
 </style>

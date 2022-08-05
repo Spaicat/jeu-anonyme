@@ -23,6 +23,7 @@ const createRoom = (host) => {
 		host,
 		users: [host],
 		inGame: false,
+		options: {},
 	};
 	rooms.set(roomId, room);
 
@@ -65,7 +66,7 @@ io.on("connection", (socket) => {
 		leaveRooms(socket);
 		
 		const room = createRoom({ ...user, socketId: socket.id });
-		console.log("Room: " + room.roomId + " has been created");
+		console.log(`Room: ${room.roomId} has been created => ${rooms.size} active rooms`);
 		
 		socket.join(room.roomId);
 		io.to(socket.id).emit("room-created", room);
@@ -84,7 +85,7 @@ io.on("connection", (socket) => {
 		io.to(roomId).emit("user-joined", room);
 	});
 
-	socket.on("start-game", (roomId) => {
+	socket.on("start-game", (roomId, options) => {
 		const room = rooms.get(roomId);
 		if (!isRoomHasUser(room, socket.id))
 			io.to(socket.id).emit("error", "User not in room");
@@ -92,6 +93,7 @@ io.on("connection", (socket) => {
 			io.to(socket.id).emit("error", "User not host");
 
 		room.inGame = true;
+		room.options.mode = options.mode;
 		io.to(roomId).emit("game-started", room);
 	});
 

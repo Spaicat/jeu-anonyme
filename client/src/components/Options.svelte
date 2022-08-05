@@ -1,18 +1,14 @@
 <script>
 	import UserIcon from "../assets/icons/UserIcon.svelte";
-	let mode = 1;
-
-	function handleConfirm() {
-		alert("Mode " + mode);
-	}
+	export let options;
 </script>
 
 <div class="options">
 	<div class="options__wrapper">
 		<ul class="options__main">
 			<li
-				class="{mode === 0 ? 'checked' : ''}"
-				on:click="{() => mode = 0}"
+				class="{options.mode === 0 ? 'checked' : ''}"
+				on:click="{() => options.mode = 0}"
 			>
 				<figure>
 					<UserIcon />
@@ -23,8 +19,8 @@
 				</div>
 			</li>
 			<li
-				class="{mode === 1 ? 'checked' : ''}"
-				on:click="{() => mode = 1}"
+				class="{options.mode === 1 ? 'checked' : ''}"
+				on:click="{() => options.mode = 1}"
 			>
 				<figure>
 					<UserIcon />

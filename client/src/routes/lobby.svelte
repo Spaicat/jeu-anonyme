@@ -7,6 +7,7 @@
 	import CrownIcon from "../assets/icons/CrownIcon.svelte";
 	import UserIcon from "../assets/icons/UserIcon.svelte";
 
+	let options = { mode: 0 };
 	$: isHost = $room.host?.socketId === $user.socketId;
 
 	io.on("disconnect", () => {
@@ -25,7 +26,7 @@
 	});
 
 	function handleStart() {
-		io.emit("start-game", $room.roomId);
+		io.emit("start-game", $room.roomId, options);
 	}
 
 	function handleQuit() {
@@ -63,7 +64,7 @@
 			{/each}
 		</ul>
 	</div>
-	<Options />
+	<Options {options} />
 	<div class="btn-container">
 		{#if isHost}
 		<a class="btn" on:click={handleStart} href="/play">

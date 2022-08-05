@@ -3,6 +3,7 @@
 	import { room } from "../stores/room.js";
 	import { io } from "$lib/realtime";
 	import { goto } from "$app/navigation";
+	import Options from "../components/Options.svelte"
 	import CrownIcon from "../assets/icons/CrownIcon.svelte";
 	import UserIcon from "../assets/icons/UserIcon.svelte";
 
@@ -60,58 +61,9 @@
 					<div class="user__name">{ userItem.name }</div>
 				</li>
 			{/each}
-				<li class="user__item">
-					<div class="user__icon">
-						<div class="user__avatar">
-							<img src="https://avatars.dicebear.com/api/initials/Random.svg" alt="avatar">
-						</div>
-						<div class="user__details">
-						</div>
-					</div>
-					<div class="user__name">Random</div>
-				</li>
-				<li class="user__item">
-					<div class="user__icon">
-						<div class="user__avatar">
-							<img src="https://avatars.dicebear.com/api/initials/Random.svg" alt="avatar">
-						</div>
-						<div class="user__details">
-						</div>
-					</div>
-					<div class="user__name">Random</div>
-				</li>
-				<li class="user__item">
-					<div class="user__icon">
-						<div class="user__avatar">
-							<img src="https://avatars.dicebear.com/api/initials/Random.svg" alt="avatar">
-						</div>
-						<div class="user__details">
-						</div>
-					</div>
-					<div class="user__name">Random</div>
-				</li>
-				<li class="user__item">
-					<div class="user__icon">
-						<div class="user__avatar">
-							<img src="https://avatars.dicebear.com/api/initials/Random.svg" alt="avatar">
-						</div>
-						<div class="user__details">
-						</div>
-					</div>
-					<div class="user__name">Random</div>
-				</li>
-				<li class="user__item">
-					<div class="user__icon">
-						<div class="user__avatar">
-							<img src="https://avatars.dicebear.com/api/initials/Random.svg" alt="avatar">
-						</div>
-						<div class="user__details">
-						</div>
-					</div>
-					<div class="user__name">Random</div>
-				</li>
 		</ul>
 	</div>
+	<Options />
 	<div class="btn-container">
 		{#if isHost}
 		<a class="btn" on:click={handleStart} href="/play">
@@ -128,7 +80,11 @@
 	@use "../styles/variables.scss" as v;
 
 	h2 {
+		margin: 0;
 		text-align: center;
+	}
+	.btn-container {
+		flex-direction: row;
 	}
 	.user {
 		&__container {
@@ -140,7 +96,10 @@
 		&__list {
 			display: flex;
 			flex-direction: row;
-			overflow: scroll;
+			overflow-x: auto;
+			overflow-y: hidden;
+			scrollbar-width: thin;
+			-webkit-overflow-scrolling: touch;
 			padding: 0;
 		}
 		&__item {
